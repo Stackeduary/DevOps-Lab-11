@@ -1,2 +1,1 @@
-# DevOps Lab 11 data intensive
-
+# DevOps Lab 11 CI/CD for Data-Intensive Applications
