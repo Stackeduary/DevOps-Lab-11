@@ -1,0 +1,59 @@
+version: "2"
+services:
+  influxdb:
+    image: influxdb:1.1.1
+    ports:
+      - '8086:8086'
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+    
+  chronograf:
+    image: chronograf:latest
+    ports:
+      - '8087:8888'
+    volumes:
+      - chronograf-storage:/var/lib/chronograf
+    depends_on:
+      - influxdb
+    environment:
+      - INFLUXDB_URL=http://${INFLUX_DB_HOST}:8086
+      
+ 
+  data_preprocess:
+    build:
+      context: ./data_preprocess
+      dockerfile: Dockerfile
+      args:
+        - INFLUX_DB_NAME=${INFLUX_DB_NAME}
+        - INFLUX_DB_HOST=${INFLUX_DB_HOST}
+        - DS_NAME=${DS_NAME}
+        - DS_HOST=${DS_HOST}
+    depends_on:
+      - "influxdb"
+ 
+  
+  data_process:
+    build:
+      context: ./data_process
+      dockerfile: Dockerfile
+      args:
+        - INFLUX_DB_NAME=${INFLUX_DB_NAME}
+        - INFLUX_DB_HOST=${INFLUX_DB_HOST}
+    depends_on:
+      - "data_preprocess"
+      
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      # - ./grafana-provisioning/:$PWD/etc/grafana/provisioning
+      - ./grafana-provisioning/:/etc/grafana/provisioning
+    depends_on:
+      - influxdb
+    
+volumes:
+  influxdb-storage:
+  chronograf-storage:
+  grafana-storage:

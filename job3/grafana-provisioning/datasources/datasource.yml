@@ -1,0 +1,25 @@
+apiVersion: 1
+datasources:
+  - name: job1
+    type: influxdb
+    access: proxy
+    database: Bill_InfluxDB
+    url: http://172.17.89.145:8086
+    isDefault: false
+    editable: true
+
+  - name: job2
+    type: influxdb
+    access: proxy
+    database: Bill_InfluxDB
+    url: http://172.17.89.145:8086
+    isDefault: false
+    editable: true
+
+  - name: job3
+    type: influxdb
+    access: proxy
+    database: cluster
+    url: http://172.17.89.145:8086
+    isDefault: true
+    editable: true      
